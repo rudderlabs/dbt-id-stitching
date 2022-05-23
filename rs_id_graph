@@ -18,11 +18,10 @@ Drop table if exists rudderstack.cte_sql;
 select listagg(sql_to_run, ' UNION ') as sql_to_run
   into rudderstack.cte_sql
   from (
-      Select 'Select distinct lower(' || a.cn || ') as edge_a, lower(''' || a.cn  || ''') as edge_a_label, lower(' || b.cn || ') as edge_b, lower(''' || b.cn  || ''') as edge_b_label from ' ||  a.tn || ' where coalesce(' || a.cn ||  ', '''') <> '''' and coalesce(' || b.cn ||  ', '''') <> ''''' as sql_to_run
+      Select 'Select distinct lower(' || a.cn || '::text) as edge_a, lower(''' || a.cn  || ''') as edge_a_label, lower(' || b.cn || '::text) as edge_b, lower(''' || b.cn  || ''') as edge_b_label from ' ||  a.tn || ' where coalesce(' || a.cn ||  '::text, '''') <> '''' and coalesce(' || b.cn ||  '::text, '''') <> ''''' as sql_to_run
       from rudderstack.cte_cols a inner join rudderstack.cte_cols b 
       on a.tn = b.tn and a.cn > b.cn 
-    );
-	
+    );	
 
 
 --- Step 2A:  Cleaned this up so now you can just get the results
