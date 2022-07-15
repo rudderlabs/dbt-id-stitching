@@ -4,14 +4,20 @@
 
 ## Overview
 
-This project is comprised of three dbt models and a Python script. The [`queries`](models/queries.sql) model generates select statements which pull IDs from your tables. The [`id_graph`](models/id_graph.sql) model combines the results of those select statement to create the ID graph the first time it is run, and matches edges (IDs) on subsequent runs. The [`check_edges`](models/check_edges.sql) model determines if there are still edges to match. The [`run_models`](run_models.py) script first runs the `queries` and `id_graph` models and compiles the `check_edges` model. It then runs the `id_graph` model until the `check_edges` query indicates that all edges are matched.
+This project is comprised of three dbt models and a Python script (if not running in DBT Cloud mode). The [`queries`](models/queries.sql) model generates select statements which pull IDs from your tables. The [`id_graph`](models/id_graph.sql) model combines the results of those select statement to create the ID graph the first time it is run, and matches edges (IDs) on subsequent runs. The [`check_edges`](models/check_edges.sql) model determines if there are still edges to match. 
+
+## Cloud Mode Options
+When running the dbt in cloud mode, you will need to define in your job how many times to run the edges.sql model.  This will require some initial testing to determine how many passes are required in order to combine all of your users' different identifiers.  5 or 6 passes should be sufficient.
+
+## CLI Options
+If you are running this in your own cli environment, the [`run_models`](run_models.py) script first runs the `queries` and `id_graph` models and compiles the `check_edges` model. It then runs the `id_graph` model until the `check_edges` query indicates that all edges are matched.
 
 ## Prerequisites
 
 - [dbt Core](https://docs.getdbt.com/dbt-cli/install/overview)
 - [Python 3](https://www.python.org/downloads/)
 
-## Installation
+## Installation for CLI
 
 1. Clone repository:
 
