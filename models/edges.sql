@@ -26,6 +26,7 @@
 
 
 {% else %}
+
       with 
         cte_min_edge_1 as (
             select edge, min(rudder_id) as first_row_id
@@ -97,15 +98,15 @@
           ) 
 
 
-    Select  n.new_rudder_id as rudder_id,
-        e.original_rudder_id,
-        e.edge_a,
-        e.edge_a_label,
-        e.edge_b,
-        e.edge_b_label,
-        {{ dbt_utils.current_timestamp() }} as edge_timestamp
-    From edges e
-        Inner Join cte_new_id n ON  e.original_rudder_id = n.original_rudder_id 
-    where e.rudder_id <> n.new_rudder_id        
+        Select  n.new_rudder_id as rudder_id,
+            e.original_rudder_id,
+            e.edge_a,
+            e.edge_a_label,
+            e.edge_b,
+            e.edge_b_label,
+            {{ dbt_utils.current_timestamp() }} as edge_timestamp
+        From edges e
+            Inner Join cte_new_id n ON  e.original_rudder_id = n.original_rudder_id 
+        where e.rudder_id <> n.new_rudder_id        
 
 {% endif %}

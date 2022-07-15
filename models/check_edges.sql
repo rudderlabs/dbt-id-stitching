@@ -1,4 +1,5 @@
 select
+    case when count(*) > 0 then 1::boolean else 0::boolean end as consolidation_needed,
     count(*) as rows_to_update
 from
     {{ ref('edges') }},
