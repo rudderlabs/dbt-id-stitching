@@ -62,13 +62,26 @@ If you are running this in your own cli environment, the [`run_models`](run_mode
     db = create_engine("dialect+driver://username:password@host:port/database")
     ```
 
-## Usage
+## Usage - CLI
 
 Run models:
 
 ```bash
 python run_models.py
 ```
+## Usage - Cloud
+Create your job like the following, taking into account how many passes on the edges model your data require
+```
+1. dbt run --full-refresh --select queries edges
+2. dbt run --select edges
+3. dbt run --select edges
+4. dbt run --select edges
+5. dbt run --select edges
+6. dbt run --select edges
+7. dbt run --select edges
+8. dbt run --select id_graph
+```
+
 
 ## License
 
