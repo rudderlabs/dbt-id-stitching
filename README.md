@@ -19,7 +19,7 @@ If you are running this in your own cli environment, the [`run_models`](run_mode
 
 ## Installation for CLI
 
-1. Clone repository:
+1. Clone repository: 
 
     ```bash
     git clone https://github.com/esadek/id_stitching_dbt.git
