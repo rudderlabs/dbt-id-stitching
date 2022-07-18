@@ -1271,3 +1271,15 @@ dbt.exceptions.CompilationException: Compilation Error in rpc request (from remo
 2022-07-18 19:48:52.711864 (Thread-25): handling status request
 2022-07-18 19:48:52.713362 (Thread-25): 19:48:52  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': '839b0802-1348-4a0b-a88d-a46e14c80f4f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f5bcb617be0>]}
 2022-07-18 19:48:52.713891 (Thread-25): sending response (<Response 1825 bytes [200 OK]>) to 10.0.14.238
+2022-07-18 19:48:56.211852 (Thread-26): 19:48:56  Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+2022-07-18 19:48:56.212091 (Thread-26): 19:48:56  Partial parsing enabled, no changes found, skipping parsing
+2022-07-18 19:48:56.402732 (Thread-26): 19:48:56  Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '839b0802-1348-4a0b-a88d-a46e14c80f4f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f5bcb700880>]}
+2022-07-18 19:48:56.678055 (Thread-27): handling status request
+2022-07-18 19:48:56.678489 (Thread-27): 19:48:56  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': '839b0802-1348-4a0b-a88d-a46e14c80f4f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f5bc80ce7c0>]}
+2022-07-18 19:48:56.678998 (Thread-27): sending response (<Response 1242 bytes [200 OK]>) to 10.0.14.238
+2022-07-18 19:48:56.690536 (Thread-28): handling status request
+2022-07-18 19:48:56.690880 (Thread-28): 19:48:56  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': '839b0802-1348-4a0b-a88d-a46e14c80f4f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f5bc80ce670>]}
+2022-07-18 19:48:56.691327 (Thread-28): sending response (<Response 1242 bytes [200 OK]>) to 10.0.14.238
+2022-07-18 19:49:06.181274 (Thread-29): handling status request
+2022-07-18 19:49:06.181698 (Thread-29): 19:49:06  Sending event: {'category': 'dbt', 'action': 'rpc_request', 'label': '839b0802-1348-4a0b-a88d-a46e14c80f4f', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f5bc80ce370>]}
+2022-07-18 19:49:06.182204 (Thread-29): sending response (<Response 1242 bytes [200 OK]>) to 10.0.14.238
