@@ -1,76 +1,42 @@
-# ID Stitching dbt Project
+# ID Stitching dbt Package
 
-[Overview](#overview) · [Prerequisites](#prerequisites) · [Installation](#installation) · [Configuration](#configuration) · [Usage](#usage) · [License](#license)
+This dbt package stitches together identifiers in an ID graph table.
 
 ## Overview
 
-This project is comprised of three dbt models and a Python script (if not running in DBT Cloud mode).   If not running in cloud mode, you will need to define your environment.  Our example code uses SQL Alchemy to connect to a sample postgres environment.  The [`queries`](models/queries.sql) model generates select statements which pull IDs from your tables. The [`id_graph`](models/id_graph.sql) model combines the results of those select statement to create the ID graph the first time it is run, and matches edges (IDs) on subsequent runs. The [`check_edges`](models/check_edges.sql) model determines if there are still edges to match. 
+The primary ouput of this package is `id_graph`. There are a few intermediate models used to create this model.
 
-## Cloud Mode Options
-When running the dbt in cloud mode, you will need to define in your job how many times to run the edges.sql model.  This will require some initial testing to determine how many passes are required in order to combine all of your users' different identifiers.  5 or 6 passes should be sufficient.
+| Model | Description |
+| --- | --- |
+| queries | Generates select statements which pull IDs from your tables. |
+| edges | Combines the results of those select statement to create a table containing edges (IDs) the first time it is run, and matches edges on subsequent runs. |
+| check_edges | Determines if there are still edges to match. |
+| id_graph | Creates an ID graph table. |
 
-## CLI Options
-If you are running this in your own cli environment, the [`run_models`](run_models.py) script first runs the `queries` and `id_graph` models and compiles the `check_edges` model.  Additional intstrumentation can be created to evaluate the check_edges model to determine programatically whether to run the edges model subsequent times.
+## Installation
 
-## Prerequisites
-
-- [dbt Core](https://docs.getdbt.com/dbt-cli/install/overview)
-- [Python 3](https://www.python.org/downloads/)
-
-## Installation for CLI
-
-1. Clone repository: 
-
-    ```bash
-    git clone https://github.com/esadek/id_stitching_dbt.git
-    cd id_stitching_dbt
-    ```
-
-2. Install [dbt-utils](https://hub.getdbt.com/dbt-labs/dbt_utils/latest/):
-
-    ```bash
-    dbt deps
-    ```
-
-3. Install [SQLAlchemy](https://www.sqlalchemy.org/):
-
-    ```bash
-    pip install SQLAlchemy
-    ```
-
-4. Install appropriate [dialect and DBAPI driver](https://docs.sqlalchemy.org/en/14/dialects/index.html):
-
-    ```bash
-    pip install <dialect-package>
-    ```
+Check [dbt Hub](https://hub.getdbt.com/rudderlabs/id_stitching/latest/) for the latest installation instructions, or [read the docs](https://docs.getdbt.com/docs/package-management) for more information on installing packages.
 
 ## Configuration
 
-1. Set [profile](https://docs.getdbt.com/dbt-cli/configure-your-profile) and ID columns in [dbt_project.yml](dbt_project.yml):
+Set ID columns and IDs to exclude in `dbt_project.yml`:
 
-    ```yaml
-    profile: 'profile_name'
-    ```
-
-    ```yaml
-    id-columns: ('anonymous_id', 'user_id', 'email')
-    ```
-
-2. Set [database URL](https://docs.sqlalchemy.org/en/14/core/engines.html?highlight=url#database-urls) in [run_models.py](run_models.py):
-
-    ```python
-    db = create_engine("dialect+driver://username:password@host:port/database")
-    ```
-
-## Usage - CLI
-
-Run models:
-
-```bash
-python run_models.py
+```yaml
+vars:
+  id-columns: ('anonymous_id', 'user_id', 'email')
+  ids-to-exclude: ('sources','user@company.com')
 ```
-## Usage - Cloud
-Create your job like the following, taking into account how many passes on the edges model your data require
+
+This package searches your data warehouse for tables that include multiple columns defined in `id-columns`. Any IDs defined in `ids-to-exclude` are disregarded.
+
+## Usage
+
+The `edges` model must be run enough times to match all edges (IDs). Five or six passes is usually sufficient. The `check_edges` model will show 0 when all edges have been matched. Edit your job commands for [dbt Cloud](https://docs.getdbt.com/docs/dbt-cloud/cloud-overview) or `run.sh` script for [dbt CLI](https://docs.getdbt.com/dbt-cli/cli-overview) to run the `edges` model however many times is necessary.
+
+### dbt Cloud
+
+Create a job with the following commands:
+
 ```
 1. dbt run --full-refresh --select queries edges
 2. dbt run --select edges
@@ -78,10 +44,19 @@ Create your job like the following, taking into account how many passes on the e
 4. dbt run --select edges
 5. dbt run --select edges
 6. dbt run --select edges
-7. dbt run --select edges
+7. dbt run --select check_edges
 8. dbt run --select id_graph
 ```
 
+### dbt CLI
+
+Run the included `run.sh` shell script:
+
+```bash
+./run.sh
+```
+
+Additional intstrumentation can be created to evaluate the `check_edges` model to determine programatically whether to run the `edges` model subsequent times.
 
 ## License
 
