@@ -33,12 +33,12 @@
                 From 
                 (
                     Select rudder_id, lower(edge_a) as edge
-                    From edges
+                    From {{ this }}
 
                     UNION
 
                     Select rudder_id, lower(edge_b) as edge
-                    From edges
+                    From {{ this }}
                 ) c
             Group by edge
             ),
@@ -49,7 +49,7 @@
                 (
                     select least(a.first_row_id,  b.first_row_id) as rudder_id,
                         lower(o.edge_a) as edge
-                    from edges o
+                    from {{ this }} o
                       left outer join cte_min_edge_1 a on lower(o.edge_a) = a.edge -- already lowercased in prior step
                       left outer join cte_min_edge_1 b on lower(o.edge_b) = b.edge -- already lowercased in prior step
                 
@@ -57,7 +57,7 @@
 
                     select least(a.first_row_id,  b.first_row_id) as rudder_id,
                         lower(o.edge_b) as edge
-                    from edges o
+                    from {{ this }} o
                       left outer join cte_min_edge_1 a on lower(o.edge_a) = a.edge 
                       left outer join cte_min_edge_1 b on lower(o.edge_b) = b.edge 
                   
@@ -71,7 +71,7 @@
                 (
                     select least(a.first_row_id,  b.first_row_id) as rudder_id,
                         lower(o.edge_a) as edge
-                    from edges o
+                    from {{ this }} o
                       left outer join cte_min_edge_2 a on lower(o.edge_a) = a.edge 
                       left outer join cte_min_edge_2 b on lower(o.edge_b) = b.edge 
                     
@@ -79,7 +79,7 @@
 
                     select least(a.first_row_id,  b.first_row_id) as rudder_id,
                         lower(o.edge_b) as edge
-                    from edges o
+                    from {{ this }} o
                       left outer join cte_min_edge_2 a on lower(o.edge_a) = a.edge 
                       left outer join cte_min_edge_2 b on lower(o.edge_b) = b.edge 
                     
@@ -91,7 +91,7 @@
             select
                 least(a.first_row_id, b.first_row_id) as new_rudder_id,
                 o.original_rudder_id
-            From edges o 
+            From {{ this }} o 
               left outer join cte_min_edge_3 a on lower(o.edge_a) = a.edge 
               left outer join cte_min_edge_3 b on lower(o.edge_b) = b.edge
         
@@ -105,7 +105,7 @@
             e.edge_b,
             e.edge_b_label,
             {{ dbt_utils.current_timestamp() }} as edge_timestamp
-        From edges e
+        From {{ this }} e
             Inner Join cte_new_id n ON  e.original_rudder_id = n.original_rudder_id 
         where e.rudder_id <> n.new_rudder_id        
 
