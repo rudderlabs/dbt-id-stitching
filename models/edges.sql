@@ -1,8 +1,4 @@
-
-
 {{ config(materialized='incremental', unique_key='original_rudder_id') }}
-
-
 
 {% if not is_incremental() %}
 
@@ -20,9 +16,8 @@
         {{ ' union '.join(sql_statements) }}
     ) s
     where 
-            NOT (lower(edge_a) like any {{var('ids-to-exclude')}} ) -- These are known violators that we want to exclude from our edges.  Make this a variable.
-        AND
-            NOT (lower(edge_b) like any {{var('ids-to-exclude')}} ) -- These are known violators that we want to exclude from our edges.  Make this a variable.
+        not lower(edge_a) in {{var('ids-to-exclude')}}
+        and not lower(edge_b) in {{var('ids-to-exclude')}}
 
 
 {% else %}

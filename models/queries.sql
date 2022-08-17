@@ -6,9 +6,9 @@ with columns as (
         {{ source('information_schema', 'columns') }}
     where
         lower(column_name) in {{ var('id-columns') }}
-        and 
-        NOT(LOWER(table_name) like any ('snapshot_%', 'sync_data_%', 'failed_records_%')) -- Exclude RudderStack Working Tables
-        --- AND if necessary, limit schemas, tables, etc.
+        and not(lower(table_name) like 'snapshot_%')
+        and not(lower(table_name) like 'sync_data_%')
+        and not(lower(table_name) like 'failed_records_%')
 )
 
 select
