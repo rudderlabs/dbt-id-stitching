@@ -37,15 +37,13 @@ The `edges` model must be run enough times to match all edges (IDs). Five or six
 
 Create a job with the following commands:
 
-```
-1. dbt run --full-refresh --select queries edges
-2. dbt run --select edges
-3. dbt run --select edges
-4. dbt run --select edges
-5. dbt run --select edges
-6. dbt run --select edges
-7. dbt run --select check_edges
-8. dbt run --select id_graph
+```bash
+dbt run --full-refresh --select queries edges
+dbt run --select edges
+dbt run --select edges
+dbt run --select edges
+dbt run --select edges
+dbt run --select edges check_edges id_graph
 ```
 
 ### dbt CLI
