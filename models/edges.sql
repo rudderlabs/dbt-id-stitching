@@ -1,8 +1,4 @@
-
-
 {{ config(materialized='incremental', unique_key='original_rudder_id') }}
-
-
 
 {% if not is_incremental() %}
 
