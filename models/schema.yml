@@ -4,3 +4,57 @@ sources:
   - name: information_schema
     tables:
       - name: columns
+
+models:
+  - name: queries
+    columns:
+      - name: sql_to_run
+        tests:
+          - unique
+          - not_null
+  - name: edges
+    columns:
+      - name: rudder_id
+        tests:
+          - not_null
+      - name: original_rudder_id
+        tests:
+          - not_null
+      - name: edge_a
+        tests:
+          - not_null
+      - name: edge_a_label
+        tests:
+          - not_null
+      - name: edge_b
+        tests:
+          - not_null
+      - name: edge_b_label
+        tests:
+          - not_null
+      - name: edge_timestamp
+        tests:
+          - not_null
+  - name: check_edges
+    columns:
+      - name: consolidation_needed
+        tests:
+          - not_null
+      - name: rows_to_update
+        tests:
+          - not_null
+  - name: id_graph
+    columns:
+      - name: rudder_id
+        tests:
+          - not_null
+      - name: edge
+        tests:
+          - unique
+          - not_null
+      - name: labels
+        tests:
+          - not_null
+      - name: latest_timestamp
+        tests:
+          - not_null
