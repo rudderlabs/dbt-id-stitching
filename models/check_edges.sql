@@ -1,23 +1,20 @@
-select
-    case when count(*) > 0 then 1::boolean else 0::boolean end as consolidation_needed,
-    count(*) as rows_to_update
-from
+SELECT
+    COUNT(*) AS rows_to_update,
+    CASE WHEN COUNT(*) > 0 THEN 1::BOOLEAN ELSE 0::BOOLEAN END AS consolidation_needed
+FROM
     {{ ref('edges') }},
     (
-        select
-            distinct case when a.rudder_id < b.rudder_id then a.rudder_id else b.rudder_id end as first_rudder_id,
-            a.edge_a as edge
-        from
-            {{ ref('edges') }} a
-        inner join
-            {{ ref('edges') }} b
-                on lower(a.edge_a) = lower(b.edge_b)
-        where
-            a.rudder_id <> b.rudder_id
-    ) ea
-where
+        SELECT DISTINCT
+            a.edge_a AS edge,
+            CASE WHEN a.rudder_id < b.rudder_id THEN a.rudder_id ELSE b.rudder_id END AS first_rudder_id
+        FROM {{ ref('edges') }} AS a
+        INNER JOIN {{ ref('edges') }} AS b
+            ON LOWER(a.edge_a) = LOWER(b.edge_b)
+        WHERE a.rudder_id != b.rudder_id
+    ) AS ea
+WHERE
     (
-        lower(edges.edge_a) = lower(ea.edge)
-        or lower(edges.edge_b) = lower(ea.edge)
+        LOWER(edges.edge_a) = LOWER(ea.edge)
+        OR LOWER(edges.edge_b) = LOWER(ea.edge)
     )
-    and edges.rudder_id <> ea.first_rudder_id
+    AND edges.rudder_id != ea.first_rudder_id
