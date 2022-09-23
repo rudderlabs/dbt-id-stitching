@@ -5,6 +5,18 @@ WITH columns AS (
     FROM {{ source('information_schema', 'columns') }}
     WHERE
         LOWER(column_name) IN {{ var('id-columns') }}
+        {% if var('schemas-to-include') != '()' %}
+        AND LOWER(table_schema) IN {{ var('schemas-to-include') }}
+        {% endif %}
+        {% if var('schemas-to-exclude') != '()' %}
+        AND NOT LOWER(table_schema) IN {{ var('schemas-to-exclude') }}
+        {% endif %}
+        {% if var('tables-to-include') != '()' %}
+        AND LOWER(table_name) IN {{ var('tables-to-include') }}
+        {% endif %}
+        {% if var('tables-to-exclude') != '()' %}
+        AND NOT LOWER(table_name) IN {{ var('tables-to-exclude') }}
+        {% endif %}
         AND NOT LOWER(table_name) LIKE 'snapshot_%'
         AND NOT LOWER(table_name) LIKE 'sync_data_%'
         AND NOT LOWER(table_name) LIKE 'failed_records_%'
