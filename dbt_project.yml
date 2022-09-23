@@ -19,3 +19,7 @@ clean-targets:
 vars:
   id-columns: ('anonymous_id', 'user_id', 'email', 'context_traits_email')
   ids-to-exclude: ('sources','testuser@rudderstack.com', 'sss@ggg.com')
+  schemas-to-include: ()
+  schemas-to-exclude: ()
+  tables-to-include: ()
+  tables-to-exclude: ()
