@@ -1,6 +1,6 @@
 SELECT
     COUNT(*) AS rows_to_update,
-    CASE WHEN COUNT(*) > 0 THEN 1::BOOLEAN ELSE 0::BOOLEAN END AS consolidation_needed
+    CASE WHEN COUNT(*) > 0 THEN CAST(1 AS BOOLEAN) ELSE CAST(0 AS BOOLEAN) END AS consolidation_needed
 FROM
     {{ ref('edges') }},
     (
