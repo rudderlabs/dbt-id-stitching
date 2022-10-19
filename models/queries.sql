@@ -5,16 +5,16 @@ WITH columns AS (
     FROM "{{ var('source-database', target.database) }}".{{ source('information_schema', 'columns').include(database=false) }}
     WHERE
         LOWER(column_name) IN {{ var('id-columns') }}
-        {% if var('schemas-to-include') != '()' %}
+        {% if var('schemas-to-include', undefined) %}
         AND LOWER(table_schema) IN {{ var('schemas-to-include') }}
         {% endif %}
-        {% if var('schemas-to-exclude') != '()' %}
+        {% if var('schemas-to-exclude', undefined) %}
         AND NOT LOWER(table_schema) IN {{ var('schemas-to-exclude') }}
         {% endif %}
-        {% if var('tables-to-include') != '()' %}
+        {% if var('tables-to-include', undefined) %}
         AND LOWER(table_name) IN {{ var('tables-to-include') }}
         {% endif %}
-        {% if var('tables-to-exclude') != '()' %}
+        {% if var('tables-to-exclude', undefined) %}
         AND NOT LOWER(table_name) IN {{ var('tables-to-exclude') }}
         {% endif %}
         AND NOT LOWER(table_name) LIKE 'snapshot_%'
