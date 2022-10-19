@@ -19,15 +19,19 @@ Check [dbt Hub](https://hub.getdbt.com/rudderlabs/id_stitching/latest/) for the 
 
 ## Configuration
 
-Set ID columns and IDs to exclude in `dbt_project.yml`:
+Set `id-columns` in `dbt_project.yml`. This package searches your data warehouse for tables that include multiple columns defined in `id-columns`.
+
+`ids-to-exclude`, `schemas-to-include`, `schemas-to-exclude`, `tables-to-include` and `tables-to-exclude` are optional.
 
 ```yaml
 vars:
   id-columns: ('anonymous_id', 'user_id', 'email')
   ids-to-exclude: ('sources','user@company.com')
+  schemas-to-include: ('marketing_site', 'iphone_app')
+  schemas-to-exclude: ('stripe')
+  tables-to-include: ('tracks', 'user_signup')
+  tables-to-exclude: ('employees')
 ```
-
-This package searches your data warehouse for tables that include multiple columns defined in `id-columns`. Any IDs defined in `ids-to-exclude` are disregarded.
 
 ## Usage
 
