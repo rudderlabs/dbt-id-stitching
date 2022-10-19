@@ -15,9 +15,11 @@
     FROM (
         {{ ' UNION ALL '.join(sql_statements) }}
     ) AS s
+    {% if var('ids-to-exclude', undefined) %}
     WHERE
         NOT LOWER(edge_a) in {{ var('ids-to-exclude') }}
         AND NOT LOWER(edge_b) in {{ var('ids-to-exclude') }}
+    {% endif %}
 
 {% else %}
 
