@@ -4,7 +4,7 @@
 
     {% set sql_statements = dbt_utils.get_column_values(table=ref('queries'), column='sql_to_run') %}
 
-    SELECT
+    SELECT DISTINCT
         ROW_NUMBER() OVER (ORDER BY 1 DESC) AS rudder_id,
         ROW_NUMBER() OVER (ORDER BY 1 DESC) AS original_rudder_id,
         edge_a,
@@ -13,7 +13,7 @@
         edge_b_label,
         {{ dbt_utils.current_timestamp() }} AS edge_timestamp
     FROM (
-        {{ ' UNION '.join(sql_statements) }}
+        {{ ' UNION ALL '.join(sql_statements) }}
     ) AS s
     WHERE
         NOT LOWER(edge_a) in {{ var('ids-to-exclude') }}
@@ -23,7 +23,7 @@
 
     WITH
     cte_min_edge_1 AS (
-        SELECT
+        SELECT DISTINCT
             edge,
             MIN(rudder_id) AS first_row_id
         FROM (
@@ -31,7 +31,7 @@
                 rudder_id,
                 LOWER(edge_a) AS edge
             FROM {{ this }}
-            UNION
+            UNION ALL
             SELECT
                 rudder_id,
                 LOWER(edge_b) AS edge
@@ -41,7 +41,7 @@
     ),
 
     cte_min_edge_2 AS (
-        SELECT
+        SELECT DISTINCT
             edge,
             MIN(rudder_id) AS first_row_id
         FROM (
@@ -53,7 +53,7 @@
                 ON LOWER(o.edge_a) = a.edge
             LEFT OUTER JOIN cte_min_edge_1 AS b
                 ON LOWER(o.edge_b) = b.edge
-            UNION
+            UNION ALL
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
                 LOWER(o.edge_b) AS edge
@@ -68,7 +68,7 @@
     ),
 
     cte_min_edge_3 AS (
-        SELECT
+        SELECT DISTINCT
             edge,
             MIN(rudder_id) AS first_row_id
         FROM (
@@ -80,7 +80,7 @@
                 ON LOWER(o.edge_a) = a.edge
             LEFT OUTER JOIN cte_min_edge_2 AS b
                 ON LOWER(o.edge_b) = b.edge
-            UNION
+            UNION ALL
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
                 LOWER(o.edge_b) AS edge

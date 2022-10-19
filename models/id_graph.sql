@@ -1,6 +1,6 @@
 {{ config(materialized='table') }}
 
-SELECT
+SELECT DISTINCT
     rudder_id,
     edge,
     {{ dbt_utils.listagg('DISTINCT edge_label', "', '") }} AS labels,
@@ -12,7 +12,7 @@ FROM (
         edge_a_label AS edge_label,
         edge_timestamp
     FROM {{ ref('edges') }}
-    UNION
+    UNION ALL
     SELECT
         rudder_id,
         edge_b AS edge,
