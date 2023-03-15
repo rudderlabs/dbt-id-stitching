@@ -11,13 +11,15 @@
         edge_a_label,
         edge_b,
         edge_b_label,
-        {{ dbt_utils.current_timestamp() }} AS edge_timestamp
+        {{ dbt.current_timestamp() }} AS edge_timestamp
     FROM (
         {{ ' UNION '.join(sql_statements) }}
     ) AS s
+    {% if var('ids-to-exclude', undefined) %}
     WHERE
-        NOT LOWER(edge_a) in {{ var('ids-to-exclude') }}
-        AND NOT LOWER(edge_b) in {{ var('ids-to-exclude') }}
+        NOT LOWER(edge_a) IN {{ var('ids-to-exclude') }}
+        AND NOT LOWER(edge_b) IN {{ var('ids-to-exclude') }}
+    {% endif %}
 
 {% else %}
 
@@ -112,7 +114,7 @@
         e.edge_a_label,
         e.edge_b,
         e.edge_b_label,
-        {{ dbt_utils.current_timestamp() }} AS edge_timestamp
+        {{ dbt.current_timestamp() }} AS edge_timestamp
     FROM {{ this }} AS e
     INNER JOIN cte_new_id
         ON e.original_rudder_id = cte_new_id.original_rudder_id
