@@ -49,7 +49,7 @@
         FROM (
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
-                LEAST(o.edge_a) AS edge
+                LOWER(o.edge_a) AS edge
             FROM {{ this }} AS o
             LEFT OUTER JOIN cte_min_edge_1 AS a
                 ON LOWER(o.edge_a) = a.edge
