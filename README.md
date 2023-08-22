@@ -2,6 +2,8 @@
 
 This dbt package stitches together identifiers in an ID graph table.
 
+Documentation: [rudderlabs.github.io/id-stitching-docs](https://rudderlabs.github.io/id-stitching-docs/)
+
 ## Overview
 
 The primary ouput of this package is `id_graph`. There are a few intermediate models used to create this model.
