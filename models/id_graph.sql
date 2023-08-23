@@ -2,25 +2,25 @@
 
 SELECT
     rudder_id,
-    edge,
-    {{ dbt.listagg('DISTINCT edge_label', "', '") }} AS labels,
-    MAX(edge_timestamp) AS latest_timestamp
+    node,
+    {{ dbt.listagg('DISTINCT node_label', "', '") }} AS labels,
+    MAX(node_timestamp) AS latest_timestamp
 FROM (
     SELECT
         rudder_id,
-        edge_a AS edge,
-        edge_a_label AS edge_label,
-        edge_timestamp
+        node_a AS node,
+        node_a_label AS node_label,
+        node_timestamp
     FROM {{ ref('edges') }}
     UNION
     SELECT
         rudder_id,
-        edge_b AS edge,
-        edge_b_label AS edge_label,
-        edge_timestamp
+        node_b AS node,
+        node_b_label AS node_label,
+        node_timestamp
     FROM {{ ref('edges') }}
 ) AS c
 GROUP BY
     rudder_id,
-    edge
+    node
 ORDER BY rudder_id
