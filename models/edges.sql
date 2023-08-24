@@ -7,93 +7,93 @@
     SELECT
         ROW_NUMBER() OVER (ORDER BY 1 DESC) AS rudder_id,
         ROW_NUMBER() OVER (ORDER BY 1 DESC) AS original_rudder_id,
-        edge_a,
-        edge_a_label,
-        edge_b,
-        edge_b_label,
-        {{ dbt.current_timestamp() }} AS edge_timestamp
+        node_a,
+        node_a_label,
+        node_b,
+        node_b_label,
+        {{ dbt.current_timestamp() }} AS node_timestamp
     FROM (
         {{ ' UNION '.join(sql_statements) }}
     ) AS s
     {% if var('ids-to-exclude', undefined) %}
     WHERE
-        NOT LOWER(edge_a) IN {{ var('ids-to-exclude') }}
-        AND NOT LOWER(edge_b) IN {{ var('ids-to-exclude') }}
+        NOT LOWER(node_a) IN {{ var('ids-to-exclude') }}
+        AND NOT LOWER(node_b) IN {{ var('ids-to-exclude') }}
     {% endif %}
 
 {% else %}
 
     WITH
-    cte_min_edge_1 AS (
+    cte_min_node_1 AS (
         SELECT
-            edge,
+            node,
             MIN(rudder_id) AS first_row_id
         FROM (
             SELECT
                 rudder_id,
-                LOWER(edge_a) AS edge
+                LOWER(node_a) AS node
             FROM {{ this }}
             UNION
             SELECT
                 rudder_id,
-                LOWER(edge_b) AS edge
+                LOWER(node_b) AS node
             FROM {{ this }}
         ) AS c
-        GROUP BY edge
+        GROUP BY node
     ),
 
-    cte_min_edge_2 AS (
+    cte_min_node_2 AS (
         SELECT
-            edge,
+            node,
             MIN(rudder_id) AS first_row_id
         FROM (
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
-                LOWER(o.edge_a) AS edge
+                LOWER(o.node_a) AS node
             FROM {{ this }} AS o
-            LEFT OUTER JOIN cte_min_edge_1 AS a
-                ON LOWER(o.edge_a) = a.edge
-            LEFT OUTER JOIN cte_min_edge_1 AS b
-                ON LOWER(o.edge_b) = b.edge
+            LEFT OUTER JOIN cte_min_node_1 AS a
+                ON LOWER(o.node_a) = a.node
+            LEFT OUTER JOIN cte_min_node_1 AS b
+                ON LOWER(o.node_b) = b.node
             UNION
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
-                LOWER(o.edge_b) AS edge
+                LOWER(o.node_b) AS node
             FROM {{ this }} AS o
-            LEFT OUTER JOIN cte_min_edge_1 AS a
-                ON LOWER(o.edge_a) = a.edge
-            LEFT OUTER JOIN cte_min_edge_1 AS b
-                ON LOWER(o.edge_b) = b.edge
+            LEFT OUTER JOIN cte_min_node_1 AS a
+                ON LOWER(o.node_a) = a.node
+            LEFT OUTER JOIN cte_min_node_1 AS b
+                ON LOWER(o.node_b) = b.node
 
         ) AS g
-        GROUP BY edge
+        GROUP BY node
     ),
 
-    cte_min_edge_3 AS (
+    cte_min_node_3 AS (
         SELECT
-            edge,
+            node,
             MIN(rudder_id) AS first_row_id
         FROM (
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
-                LOWER(o.edge_a) AS edge
+                LOWER(o.node_a) AS node
             FROM {{ this }} AS o
-            LEFT OUTER JOIN cte_min_edge_2 AS a
-                ON LOWER(o.edge_a) = a.edge
-            LEFT OUTER JOIN cte_min_edge_2 AS b
-                ON LOWER(o.edge_b) = b.edge
+            LEFT OUTER JOIN cte_min_node_2 AS a
+                ON LOWER(o.node_a) = a.node
+            LEFT OUTER JOIN cte_min_node_2 AS b
+                ON LOWER(o.node_b) = b.node
             UNION
             SELECT
                 LEAST(a.first_row_id, b.first_row_id) AS rudder_id,
-                LOWER(o.edge_b) AS edge
+                LOWER(o.node_b) AS node
             FROM {{ this }} AS o
-            LEFT OUTER JOIN cte_min_edge_2 AS a
-                ON LOWER(o.edge_a) = a.edge
-            LEFT OUTER JOIN cte_min_edge_2 AS b
-                ON LOWER(o.edge_b) = b.edge
+            LEFT OUTER JOIN cte_min_node_2 AS a
+                ON LOWER(o.node_a) = a.node
+            LEFT OUTER JOIN cte_min_node_2 AS b
+                ON LOWER(o.node_b) = b.node
 
         ) AS h
-        GROUP BY edge
+        GROUP BY node
     ),
 
     cte_new_id AS (
@@ -101,20 +101,20 @@
             o.original_rudder_id,
             LEAST(a.first_row_id, b.first_row_id) AS new_rudder_id
         FROM {{ this }} AS o
-        LEFT OUTER JOIN cte_min_edge_3 AS a
-            ON LOWER(o.edge_a) = a.edge
-        LEFT OUTER JOIN cte_min_edge_3 AS b
-            ON LOWER(o.edge_b) = b.edge
+        LEFT OUTER JOIN cte_min_node_3 AS a
+            ON LOWER(o.node_a) = a.node
+        LEFT OUTER JOIN cte_min_node_3 AS b
+            ON LOWER(o.node_b) = b.node
     )
 
     SELECT
         cte_new_id.new_rudder_id AS rudder_id,
         e.original_rudder_id,
-        e.edge_a,
-        e.edge_a_label,
-        e.edge_b,
-        e.edge_b_label,
-        {{ dbt.current_timestamp() }} AS edge_timestamp
+        e.node_a,
+        e.node_a_label,
+        e.node_b,
+        e.node_b_label,
+        {{ dbt.current_timestamp() }} AS node_timestamp
     FROM {{ this }} AS e
     INNER JOIN cte_new_id
         ON e.original_rudder_id = cte_new_id.original_rudder_id

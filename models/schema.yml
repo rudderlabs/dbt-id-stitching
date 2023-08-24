@@ -20,19 +20,19 @@ models:
       - name: original_rudder_id
         tests:
           - not_null
-      - name: edge_a
+      - name: node_a
         tests:
           - not_null
-      - name: edge_a_label
+      - name: node_a_label
         tests:
           - not_null
-      - name: edge_b
+      - name: node_b
         tests:
           - not_null
-      - name: edge_b_label
+      - name: node_b_label
         tests:
           - not_null
-      - name: edge_timestamp
+      - name: node_timestamp
         tests:
           - not_null
   - name: check_edges
@@ -48,7 +48,7 @@ models:
       - name: rudder_id
         tests:
           - not_null
-      - name: edge
+      - name: node
         tests:
           - unique
           - not_null

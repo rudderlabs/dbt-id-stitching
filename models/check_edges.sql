@@ -5,16 +5,16 @@ FROM
     {{ ref('edges') }},
     (
         SELECT DISTINCT
-            a.edge_a AS edge,
+            a.node_a AS node,
             CASE WHEN a.rudder_id < b.rudder_id THEN a.rudder_id ELSE b.rudder_id END AS first_rudder_id
         FROM {{ ref('edges') }} AS a
         INNER JOIN {{ ref('edges') }} AS b
-            ON LOWER(a.edge_a) = LOWER(b.edge_b)
+            ON LOWER(a.node_a) = LOWER(b.node_b)
         WHERE a.rudder_id != b.rudder_id
     ) AS ea
 WHERE
     (
-        LOWER(edges.edge_a) = LOWER(ea.edge)
-        OR LOWER(edges.edge_b) = LOWER(ea.edge)
+        LOWER(edges.node_a) = LOWER(ea.node)
+        OR LOWER(edges.node_b) = LOWER(ea.node)
     )
     AND edges.rudder_id != ea.first_rudder_id

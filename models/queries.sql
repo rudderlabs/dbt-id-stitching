@@ -22,7 +22,7 @@ WITH columns AS (
         AND NOT LOWER(table_name) LIKE 'failed_records_%'
 )
 
-SELECT 'SELECT DISTINCT ' || a.cn || '::TEXT AS edge_a, ''' || a.cn || ''' AS edge_a_label, ' || b.cn || '::TEXT AS edge_b, ''' || b.cn || ''' AS edge_b_label FROM ' || a.tn || ' WHERE COALESCE(' || a.cn || '::TEXT, '''') != '''' AND COALESCE(' || b.cn || '::TEXT, '''') != ''''' AS sql_to_run
+SELECT 'SELECT DISTINCT ' || a.cn || '::TEXT AS node_a, ''' || a.cn || ''' AS node_a_label, ' || b.cn || '::TEXT AS node_b, ''' || b.cn || ''' AS node_b_label FROM ' || a.tn || ' WHERE COALESCE(' || a.cn || '::TEXT, '''') != '''' AND COALESCE(' || b.cn || '::TEXT, '''') != ''''' AS sql_to_run
 FROM columns AS a
 INNER JOIN columns AS b
     ON a.tn = b.tn
