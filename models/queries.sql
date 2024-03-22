@@ -2,7 +2,7 @@ WITH columns AS (
     SELECT
         column_name AS cn,
         table_catalog || '.' || table_schema || '.' || table_name AS tn
-    FROM "{{ var('source-database', target.database) }}".{{ source('information_schema', 'columns').include(database=false) }}
+    FROM {{ var('source-database', target.database) }}.{{ source('information_schema', 'columns').include(database=false) }}
     WHERE
         LOWER(column_name) IN {{ var('id-columns') }}
         {% if var('schemas-to-include', undefined) %}
